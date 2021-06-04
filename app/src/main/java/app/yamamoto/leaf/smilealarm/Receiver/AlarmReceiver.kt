@@ -6,6 +6,10 @@ import android.content.Intent
 import app.yamamoto.leaf.smilealarm.service.AlarmService
 import app.yamamoto.leaf.smilealarm.util.Constants
 import android.text.format.DateFormat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import app.yamamoto.leaf.smilealarm.CameraActivity
+import app.yamamoto.leaf.smilealarm.MainActivity
 import io.karn.notify.Notify
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -17,7 +21,8 @@ class AlarmReceiver :BroadcastReceiver() {
 
         when (intent.action){
             Constants.ACTION_SET_EXACT_ALARM -> {
-                buildNotification(context, "Set exact Time", convertDate(timeInMillis))
+                val toCameraIntent = Intent(context, CameraActivity::class.java)
+                startActivity(context, toCameraIntent)
             }
 
             Constants.ACTION_SET_REPETITIVE_ALARM -> {
@@ -25,19 +30,9 @@ class AlarmReceiver :BroadcastReceiver() {
                     this.timeInMillis = timeInMillis + TimeUnit.DAYS.toMillis(7)
                 }
                 AlarmService(context).setRepetitiveAlarm(cal.timeInMillis)
-                buildNotification(context, "Set Repetitive Times", convertDate(timeInMillis))
+                val toCameraIntent= Intent(context, CameraActivity::class.java)
+                startActivity(context, toCameraIntent)
             }
         }
     }
-
-    private fun buildNotification(context: Context, title: String, message: String) {
-        Notify.with(context).content{
-                this.title = title
-                this.text = "I got triggerd at - $message"
-            }
-            .show()
-    }
-
-    private fun convertDate(timeInMillis: Long): String =
-        DateFormat.format ("dd/mm/yyyy hh:mm:ss", timeInMillis).toString()
-}
+     }
